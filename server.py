@@ -104,6 +104,8 @@ class Handler(BaseHTTPServer.BaseHTTPRequestHandler):
             books[int(form['book_id'].value)].status = 'available'
             books[int(form['book_id'].value)].user_id = None
             self.send_response(200)
+            self.end_headers()
+            self.wfile.write("ok")
             return 200
         except Exception as e:
             self.send_response(404)
