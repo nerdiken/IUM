@@ -3,7 +3,9 @@ package com.example.axant.library;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
@@ -41,6 +43,7 @@ import java.util.logging.ConsoleHandler;
 import android.content.Intent;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.NoConnectionError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -69,9 +72,11 @@ public class LoginActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        SharedPreferences sharedPref = LoginActivity.this.getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = getApplicationContext().getSharedPreferences(
+                getString(R.string.login_preferences), Context.MODE_PRIVATE);
 
         int token = sharedPref.getInt(getString(R.string.login_token), -1);
+        Log.d("Token", String.valueOf(token));
         if(token != -1){
             Intent intent = new Intent(getApplicationContext(), Main2Activity.class);
             startActivity(intent);
@@ -106,6 +111,19 @@ public class LoginActivity extends AppCompatActivity{
     }
 
 
+    @Override
+    public void onResume(){
+        super.onResume();
+        SharedPreferences sharedPref = getApplicationContext().getSharedPreferences(
+                getString(R.string.login_preferences), Context.MODE_PRIVATE);
+
+        int token = sharedPref.getInt(getString(R.string.login_token), -1);
+        Log.d("Token", String.valueOf(token));
+        if(token != -1){
+            Intent intent = new Intent(getApplicationContext(), Main2Activity.class);
+            startActivity(intent);
+        }
+    }
 
     /**
      * Attempts to sign in or register the account specified by the login form.
@@ -157,7 +175,8 @@ public class LoginActivity extends AppCompatActivity{
                         public void onResponse(String response) {
                             // Display the first 500 characters of the response string.
                             Log.d("Volley","Response is: "+ response);
-                            SharedPreferences sharedPref = LoginActivity.this.getPreferences(Context.MODE_PRIVATE);
+                            SharedPreferences sharedPref = getApplicationContext().getSharedPreferences(
+                                    getString(R.string.login_preferences), Context.MODE_PRIVATE);
                             SharedPreferences.Editor editor = sharedPref.edit();
                             editor.putInt(getString(R.string.login_token), Integer.valueOf(response));
                             editor.commit();

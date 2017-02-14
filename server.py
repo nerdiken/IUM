@@ -75,10 +75,13 @@ class Handler(BaseHTTPServer.BaseHTTPRequestHandler):
                 self.end_headers()
                 self.wfile.write(json.dumps(status_book, cls=LibraryEncoder))
             else:
+                books_to_send = []
+                for book in books:
+                    books_to_send.append(books[book])
                 self.send_response(200)
                 self.send_header("Content-type", "application/json")
                 self.end_headers()
-                self.wfile.write(json.dumps(books, cls=LibraryEncoder))
+                self.wfile.write(json.dumps(books_to_send, cls=LibraryEncoder))
         except Exception as e:
             self.send_response(404)
             print 'Exception in books: ', e
@@ -169,8 +172,20 @@ users = {}
 
 
 def populate():
-    books[1] = Books(id=1, author='Roby', title='Sticazzi', year=1994, publishing='pubign', status='on_loan', user_id=1)
-    books[2] = Books(id=2, author='Autore', title='Titolo', year=1994, publishing='pub', status='available',
+    books[1] = Books(id=1, author='William Gibson', title='Neuromante', year=1984, publishing='pub', status='on_loan', user_id=1)
+    books[2] = Books(id=2, author='John Steinbeck', title='Furore', year=1939, publishing='pub', status='available',
+                     user_id=None)
+    books[3] = Books(id=3, author='George Orwell', title='1984', year=1948, publishing='pub',
+                     status='available',
+                     user_id=None)
+    books[4] = Books(id=4, author='Albert Camus', title='Lo straniero', year=1942, publishing='pub',
+                     status='available',
+                     user_id=None)
+    books[5] = Books(id=5, author='Franz Kafka', title='Il processo', year=1925, publishing='pub',
+                     status='available',
+                     user_id=None)
+    books[6] = Books(id=6, author='Jacques Prevert', title='Paroles', year=1946, publishing='pub',
+                     status='available',
                      user_id=None)
     users[1] = Users(id=1, username='nerdiken', password='123')
     users[2] = Users(id=2, username='piero', password='123')

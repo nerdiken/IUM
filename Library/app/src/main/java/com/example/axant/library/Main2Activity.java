@@ -1,6 +1,8 @@
 package com.example.axant.library;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -18,12 +20,17 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkError;
+import com.android.volley.NoConnectionError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -32,6 +39,9 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import static android.R.id.content;
 
 public class Main2Activity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -45,23 +55,24 @@ public class Main2Activity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        SharedPreferences sharedPref = Main2Activity.this.getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = getApplicationContext().getSharedPreferences(
+                getString(R.string.login_preferences), Context.MODE_PRIVATE);
 
         int token = sharedPref.getInt(getString(R.string.login_token), -1);
-        if(token != -1){
+        if (token == -1) {
             Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
             startActivity(intent);
         }
         setContentView(R.layout.activity_main2);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+       setSupportActionBar(toolbar);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Intent intent = new Intent(getApplicationContext(),CatalogActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -73,16 +84,20 @@ public class Main2Activity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        navigationView.getMenu().getItem(0).setChecked(true);
 
         Intent intent = getIntent();
         TextView textWelcome = (TextView) findViewById(R.id.textWelcome);
 
-            String username = intent.getStringExtra("user");
+        String username = intent.getStringExtra("user");
         if (username != null) {
+
             textWelcome.setText("Bentornato " + username + "!");
-        }
-        else {
-            textWelcome.setVisibility(View.GONE);
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putString("user", username);
+            editor.commit();
+        } else {
+            textWelcome.setText("Ciao " + sharedPref.getString("user", "") + "!");
         }
 
         prepareListData();
@@ -93,7 +108,7 @@ public class Main2Activity extends AppCompatActivity
         listDataHeader = new ArrayList<String>();
         listDataChild = new HashMap<String, List<String>>();
 
-        String url = getString(R.string.base_url) + getString(R.string.api_my_loans) +"?id=1";
+        String url = getString(R.string.base_url) + getString(R.string.api_my_loans) + "?id=1";
 
 
         JsonArrayRequest jsObjRequest = new JsonArrayRequest
@@ -107,43 +122,87 @@ public class Main2Activity extends AppCompatActivity
                         // preparing list data
 
                         Log.d("Volley", "Response: " + response);
-                        for (int i = 0; i < response.length(); i++) {
-                            try {
-                                JSONObject book = response.getJSONObject(i);
-                                listDataHeader.add(book.getString("id") + ";" +book.getString("title"));
-                                // Adding child data
-                                List<String> book_details = new ArrayList<String>();
-                                book_details.add("Autore: " + book.getString("author"));
-                                book_details.add("Anno di pubblicazione: " + book.getString("year"));
-                                book_details.add("Casa editrice: " + book.getString("publishing"));
-                                listDataChild.put(listDataHeader.get(i), book_details); // Header, Child data
-                            } catch (JSONException e) {
-                                e.printStackTrace();
+                        TextView no_books = (TextView) findViewById(R.id.no_books);
+                        TextView consulta = (TextView) findViewById(R.id.consulta);
+                        if (response.length() == 0) {
+
+                            no_books.setVisibility(View.VISIBLE);
+                            consulta.setVisibility(View.VISIBLE);
+                        } else {
+                            no_books.setVisibility(View.GONE);
+                            consulta.setVisibility(View.GONE);
+                            for (int i = 0; i < response.length(); i++) {
+                                try {
+                                    JSONObject book = response.getJSONObject(i);
+                                    listDataHeader.add(book.getString("id") + ";" + book.getString("title"));
+                                    // Adding child data
+                                    List<String> book_details = new ArrayList<String>();
+                                    book_details.add("Autore: " + book.getString("author"));
+                                    book_details.add("Anno di pubblicazione: " + book.getString("year"));
+                                    book_details.add("Casa editrice: " + book.getString("publishing"));
+                                    listDataChild.put(listDataHeader.get(i), book_details); // Header, Child data
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
                             }
+                            listAdapter = new ExpandableListAdapter(getApplicationContext(), Main2Activity.this, listDataHeader, listDataChild);
+
+                            // setting list adapter
+                            expListView.setAdapter(listAdapter);
 
                         }
-                        listAdapter = new ExpandableListAdapter(getApplicationContext(), Main2Activity.this, listDataHeader, listDataChild);
 
-                        // setting list adapter
-                        expListView.setAdapter(listAdapter);
                     }
                 }, new Response.ErrorListener() {
 
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.d("Volley","Error: " + error.toString());
+                        Log.d("Volley", "Error: " + error.toString());
+                        String message = "Error";
+                        if (error instanceof NoConnectionError) {
+                            message = "Impossibile connettersi al server. Riprova più tardi!";
+                        }
+                        AlertDialog.Builder builder = new AlertDialog.Builder(Main2Activity.this);
+                        builder.setMessage(message)
+                                .setCancelable(false)
+                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        dialog.dismiss();
+
+                                    }
+                                });
+                        AlertDialog alert = builder.create();
+                        alert.show();
 
                     }
                 });
 
-// Access the RequestQueue through your singleton class.
+        // Access the RequestQueue through your singleton class.
         VolleySingleton.getInstance(this).addToRequestQueue(jsObjRequest);
         // Adding child data
 
 
+    }
 
 
+    @Override
+    public void onRestart() {
+        super.onResume();
+        SharedPreferences sharedPref = getApplicationContext().getSharedPreferences(
+                getString(R.string.login_preferences), Context.MODE_PRIVATE);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.getMenu().getItem(0).setChecked(true);
 
+        int token = sharedPref.getInt(getString(R.string.login_token), -1);
+        if (token != -1) {
+            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+            startActivity(intent);
+        } else {
+            prepareListData();
+        }
+
+        Log.d("Restart", "Restart");
     }
 
     @Override
@@ -151,55 +210,44 @@ public class Main2Activity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main2, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
         }
 
-        return super.onOptionsItemSelected(item);
     }
+    
+
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
+        item.setChecked(true);
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        if (id == R.id.catalog) {
+            Intent intent = new Intent(getApplicationContext(),CatalogActivity.class);
+            startActivity(intent);
+            return true;
+        } else if (id == R.id.loans) {
+            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+            drawer.closeDrawer(GravityCompat.START);
+            return true;
 
-        } else if (id == R.id.nav_slideshow) {
+        } else if (id == R.id.logout) {
 
-        } else if (id == R.id.nav_manage) {
+            SharedPreferences sharedPref = getApplicationContext().getSharedPreferences(
+                    getString(R.string.login_preferences), Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putInt(getString(R.string.login_token), -1);
+            editor.commit();
+            Log.d("Token", String.valueOf(sharedPref.getInt(getString(R.string.login_token), -1)));
+            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+            finish();
+            startActivity(intent);
 
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
 
         }
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+
 }

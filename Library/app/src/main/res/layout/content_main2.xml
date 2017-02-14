@@ -38,10 +38,42 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
+
     <ExpandableListView
         android:layout_width="fill_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/textView2"
         android:layout_marginTop="13dp"
         android:id="@+id/bookList" />
+
+    <TextView
+        android:text="Consulta il catalogo tramite il bottone in basso a destra"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/consulta"
+        android:textSize="20sp"
+        android:fontFamily="sans-serif"
+        android:textColor="@color/colorPrimaryDark"
+        android:layout_marginTop="19dp"
+        android:layout_below="@+id/no_books"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:visibility="gone" />
+
+    <TextView
+        android:text="Non hai prestiti in corso"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/no_books"
+        android:textSize="20sp"
+        android:fontFamily="sans-serif"
+        android:textColor="@android:color/background_light"
+        android:background="@color/colorPrimaryDark"
+        android:padding="20dp"
+        android:layout_marginTop="15dp"
+        android:textAlignment="center"
+        android:layout_below="@+id/textView2"
+        android:layout_centerHorizontal="true"
+        android:visibility="gone" />
+
 </RelativeLayout>

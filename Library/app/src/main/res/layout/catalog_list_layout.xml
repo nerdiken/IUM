@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+    <TextView
+        android:id="@+id/catalog_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:text="Marshmallow"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="@color/colorPrimaryDark"
+        android:textStyle="normal|bold"
+        android:textSize="18sp" />
+
+
+    <TextView
+        android:id="@+id/catalog_author"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/catalog_title"
+        android:layout_marginTop="5dp"
+        android:text="Android 6.0"
+        android:textColor="#757575" />
+
+    <TextView
+        android:id="@+id/catalog_year"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/catalog_author"
+        android:layout_marginTop="5dp"
+        android:text="asdad"
+        android:textColor="#757575" />
+
+    <TextView
+        android:id="@+id/catalog_publishing"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/catalog_year"
+        android:layout_marginTop="5dp"
+        android:text="asdada"
+        android:textColor="#757575" />
+
+    <TextView
+        android:id="@+id/catalog_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Android 6.0"
+        android:textColor="@android:color/black"
+        android:textStyle="normal|bold"
+        android:textSize="16sp"
+        android:layout_alignBottom="@+id/catalog_title"
+        android:layout_alignLeft="@+id/catalog_button"
+        android:layout_alignParentEnd="true" />
+
+    <Button
+        android:text="Lo voglio"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/catalog_button"
+        android:backgroundTint="@color/colorPrimary"
+        android:textColor="@android:color/background_light"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+</RelativeLayout>
