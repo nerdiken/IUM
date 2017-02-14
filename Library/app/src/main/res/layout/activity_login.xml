@@ -1,4 +1,5 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -19,10 +20,44 @@
         android:layout_marginBottom="8dp"
         android:visibility="gone" />
 
+    <ImageView
+        app:srcCompat="@drawable/book"
+        android:id="@+id/bookImage"
+        android:layout_width="100dp"
+        android:layout_height="100dp" />
+
+    <TextView
+        android:text="HCI Library"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/bookImage"
+        android:layout_toEndOf="@+id/bookImage"
+        android:layout_marginLeft="22dp"
+        android:layout_marginStart="22dp"
+        android:layout_marginTop="13dp"
+        android:id="@+id/txtLibrary"
+        android:textSize="30sp"
+        android:textColor="@color/colorPrimary"
+        android:textStyle="normal|bold" />
+
+    <TextView
+        android:text="Accedi con il tuo account"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/txtAccedi"
+        android:textSize="20sp"
+        android:textColor="?android:attr/textColorSecondary"
+        android:layout_below="@+id/bookImage"
+        android:layout_centerHorizontal="true" />
+
     <ScrollView
         android:id="@+id/login_form"
         android:layout_width="match_parent"
-        android:layout_height="205dp">
+        android:layout_height="205dp"
+        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
 
         <LinearLayout
             android:id="@+id/email_login_form"
@@ -74,4 +109,4 @@
 
         </LinearLayout>
     </ScrollView>
-</LinearLayout>
+</RelativeLayout>

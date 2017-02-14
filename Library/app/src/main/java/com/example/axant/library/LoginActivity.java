@@ -32,6 +32,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -67,6 +68,9 @@ public class LoginActivity extends AppCompatActivity{
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+    private ImageView mBookImage;
+    private TextView txtAccedi;
+    private TextView txtLibrary;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,6 +112,9 @@ public class LoginActivity extends AppCompatActivity{
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
+        mBookImage = (ImageView) findViewById(R.id.bookImage);
+        txtAccedi = (TextView) findViewById(R.id.txtAccedi);
+        txtLibrary = (TextView) findViewById(R.id.txtLibrary);
     }
 
 
@@ -225,6 +232,10 @@ public class LoginActivity extends AppCompatActivity{
             int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
             mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+            txtAccedi.setVisibility(show ? View.GONE : View.VISIBLE);
+            txtLibrary.setVisibility(show ? View.GONE : View.VISIBLE);
+            mBookImage.setVisibility(show ? View.GONE : View.VISIBLE);
+
             mLoginFormView.animate().setDuration(shortAnimTime).alpha(
                     show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
                 @Override
@@ -246,6 +257,9 @@ public class LoginActivity extends AppCompatActivity{
             // and hide the relevant UI components.
             mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
             mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+            txtAccedi.setVisibility(show ? View.GONE : View.VISIBLE);
+            txtLibrary.setVisibility(show ? View.GONE : View.VISIBLE);
+            mBookImage.setVisibility(show ? View.GONE : View.VISIBLE);
         }
     }
 

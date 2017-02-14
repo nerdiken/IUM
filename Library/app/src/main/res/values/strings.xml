@@ -21,7 +21,7 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
-    <string name="base_url">http://192.168.1.88:8000</string>
+    <string name="base_url">http://172.16.91.201:8000</string>
     <string name="api_login">/login</string>
     <string name="api_my_loans">/my_loans</string>
     <string name="api_return">/return_book</string>
